@@ -1,4 +1,4 @@
-module github.com/kom1ssar/go_boilerplate
+module github.com/kom1ssar/grpc-auth
 
 go 1.21
 
