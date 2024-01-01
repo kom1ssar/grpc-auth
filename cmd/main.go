@@ -1,11 +1,10 @@
 package main
 
-import (
-	"fmt"
+const grpcPort = 50051
 
-	"github.com/fatih/color"
-)
+type server struct {
+}
 
 func main() {
-	fmt.Println(color.GreenString("Hello, world!"))
+
 }
