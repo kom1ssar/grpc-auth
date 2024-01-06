@@ -7,5 +7,5 @@ import (
 
 type UserService interface {
 	GetById(ctx context.Context, id int64) (*model.User, error)
-	Create(ctx context.Context, user *model.User) (int64, error)
+	Create(ctx context.Context, user *model.User, passwordConfirm string) (int64, error)
 }
