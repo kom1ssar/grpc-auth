@@ -1,3 +1,3 @@
-## boilerplate
+## grpc user/auth service
 
   
