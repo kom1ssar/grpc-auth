@@ -5,6 +5,7 @@ package user_v1;
 import "google/protobuf/timestamp.proto";
 import "google/protobuf/empty.proto";
 import "google/protobuf/wrappers.proto";
+import "validate/validate.proto";
 
 option go_package = "github.com/kom1ssar/grpc-auth/pkg/user_v1;user_v1";
 
@@ -23,10 +24,6 @@ service UserV1{
 }
 
 
-
-
-
-
 message User{
   int64 id = 1;
   string name = 2;
@@ -37,10 +34,10 @@ message User{
 }
 
 message UserToCreate{
-  string name = 1;
-  string email = 2;
-  string password = 3;
-  string password_confirm = 4;
+  string name = 1 [(validate.rules).string = {min_len: 3, max_len: 50}];
+  string email = 2 [(validate.rules).string.email = true];
+  string password = 3 [(validate.rules).string = {min_len: 5, max_len: 50}];
+  string password_confirm = 4 [(validate.rules).string = {min_len: 5, max_len: 50}];
 }
 
 message CreateUserRequest{
@@ -52,7 +49,7 @@ message CreateUserResponse{
 }
 
 message GetUserRequest{
-  int64 id = 1;
+  int64 id = 1 [(validate.rules).int64.gte = 1];
 }
 
 message GetUserResponse{
@@ -66,11 +63,11 @@ message GetUserResponse{
 
 
 message UpdateUserRequest{
-  int64 id = 1;
-  google.protobuf.StringValue name = 2;
-  google.protobuf.StringValue email = 3;
+  int64 id = 1 [(validate.rules).int64.gte = 1];
+  google.protobuf.StringValue name = 2 [(validate.rules).string = {min_len: 3, max_len: 50}];
+  google.protobuf.StringValue email = 3 [(validate.rules).string.email = true];
 }
 
 message DeleteUserRequest{
-  int64 id = 1;
+  int64 id = 1 [(validate.rules).int64.gte = 1];
 }

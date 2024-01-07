@@ -5,6 +5,7 @@ go 1.21
 require (
 	github.com/Masterminds/squirrel v1.5.4
 	github.com/brianvoe/gofakeit/v6 v6.26.3
+	github.com/envoyproxy/protoc-gen-validate v1.0.2
 	github.com/georgysavva/scany v1.2.1
 	github.com/gojuno/minimock/v3 v3.3.2
 	github.com/jackc/pgconn v1.14.0

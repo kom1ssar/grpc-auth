@@ -4,8 +4,10 @@ import (
 	"context"
 	"github.com/kom1ssar/grpc-auth/internal/closer"
 	"github.com/kom1ssar/grpc-auth/internal/config"
+	"github.com/kom1ssar/grpc-auth/internal/interceptor"
 	desc "github.com/kom1ssar/grpc-auth/pkg/user_v1"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/reflection"
 	"log"
 	"net"
@@ -62,7 +64,10 @@ func (a *App) initConfig(_ context.Context) error {
 }
 
 func (a *App) initGRPCServer(ctx context.Context) error {
-	a.grpcServer = grpc.NewServer()
+	a.grpcServer = grpc.NewServer(
+		grpc.Creds(insecure.NewCredentials()),
+		grpc.UnaryInterceptor(interceptor.ValidateInterceptor),
+	)
 	reflection.Register(a.grpcServer)
 
 	desc.RegisterUserV1Server(a.grpcServer, a.serviceProvider.UserImplementation(ctx))
