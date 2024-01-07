@@ -3,7 +3,7 @@ package user
 import (
 	"context"
 	"fmt"
-	"github.com/kom1ssar/grpc-auth/internal/converter"
+	userConverter "github.com/kom1ssar/grpc-auth/internal/converter/user"
 	desc "github.com/kom1ssar/grpc-auth/pkg/user_v1"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
@@ -16,7 +16,7 @@ func (i *Implementation) Get(ctx context.Context, req *desc.GetUserRequest) (*de
 		return nil, err
 	}
 
-	userConverted := converter.ToUserFromService(user)
+	userConverted := userConverter.ToUserFromService(user)
 	return &desc.GetUserResponse{
 		Id:        user.Id,
 		Name:      userConverted.Name,
