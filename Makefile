@@ -38,7 +38,7 @@ generate-user-api:
 	--plugin=protoc-gen-go=bin/protoc-gen-go \
 	--validate_out lang=go:pkg/user_v1 --validate_opt=paths=source_relative \
     --plugin=protoc-gen-validate=bin/protoc-gen-validate \
-    --grpc-gateway_out=pkg/note_v1 --grpc-gateway_opt=paths=source_relative \
+    --grpc-gateway_out=pkg/user_v1 --grpc-gateway_opt=paths=source_relative \
     --plugin=protoc-gen-grpc-gateway=bin/protoc-gen-grpc-gateway \
 	--go-grpc_out=pkg/user_v1 --go-grpc_opt=paths=source_relative \
 	--plugin=protoc-gen-go-grpc=bin/protoc-gen-go-grpc \
@@ -66,7 +66,7 @@ local-migration-down:
 
 test:
 	go clean -testcache
-	go test ./... -covermode count -coverpkg=github.com/olezhek28/microservices_course/week_4/internal/service/...,github.com/olezhek28/microservices_course/week_4/internal/api/... -count 5
+	go test ./... -covermode count -coverpkg=github.com/kom1ssar/grpc-auth/internal/service/...,github.com/kom1ssar/grpc-auth/internal/api/... -count 5
 
 test-coverage:
 	go clean -testcache
