@@ -50,7 +50,7 @@ func TestCreate(t *testing.T) {
 		res = &desc.CreateUserResponse{Id: id}
 	)
 
-	defer t.Cleanup(mc.Finish)
+	mc.Finish()
 
 	tests := []struct {
 		name            string
