@@ -2,7 +2,6 @@ package user
 
 import (
 	"context"
-	"fmt"
 	userConverter "github.com/kom1ssar/grpc-auth/internal/converter/user"
 	desc "github.com/kom1ssar/grpc-auth/pkg/user_v1"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -12,7 +11,6 @@ func (i *Implementation) Get(ctx context.Context, req *desc.GetUserRequest) (*de
 	user, err := i.userService.GetById(ctx, req.Id)
 
 	if err != nil {
-		fmt.Println(err)
 		return nil, err
 	}
 
