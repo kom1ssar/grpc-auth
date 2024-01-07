@@ -105,3 +105,7 @@ func logQuery(ctx context.Context, q db.Query, args ...interface{}) {
 		fmt.Sprintf("sql :%s", q.Name),
 		fmt.Sprintf("query: %s", prettyQuery))
 }
+
+func MakeContextTx(ctx context.Context, tx pgx.Tx) context.Context {
+	return context.WithValue(ctx, TxKey, tx)
+}

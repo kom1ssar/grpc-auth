@@ -6,10 +6,17 @@ import (
 	"github.com/jackc/pgx/v4"
 )
 
+// HandlerTx хендлер транзакции
+type HandlerTx func(ctx context.Context) error
+
 // Client клиент для работы с бд
 type Client interface {
 	DB() DB
 	Close() error
+}
+
+type TxManager interface {
+	ReadCommitted(ctx context.Context, f HandlerTx) error
 }
 
 // Transaction интерфейс для работы с транзакциями

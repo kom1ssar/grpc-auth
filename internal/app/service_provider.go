@@ -5,6 +5,7 @@ import (
 	"github.com/kom1ssar/grpc-auth/internal/api/user"
 	"github.com/kom1ssar/grpc-auth/internal/client/db"
 	"github.com/kom1ssar/grpc-auth/internal/client/db/pg"
+	"github.com/kom1ssar/grpc-auth/internal/client/db/transaction"
 	"github.com/kom1ssar/grpc-auth/internal/closer"
 	"github.com/kom1ssar/grpc-auth/internal/config"
 	"github.com/kom1ssar/grpc-auth/internal/config/env"
@@ -19,8 +20,9 @@ type serviceProvider struct {
 	pgConfig   config.PGConfig
 	grpcConfig config.GRPCConfig
 
-	dbClient       db.Client
-	userRepository repository.UserRepository
+	dbClient           db.Client
+	transactionManager db.TxManager
+	userRepository     repository.UserRepository
 
 	userService service.UserService
 
@@ -77,6 +79,14 @@ func (s *serviceProvider) DbClient(ctx context.Context) db.Client {
 
 	}
 	return s.dbClient
+}
+
+func (s *serviceProvider) TransactionManager(ctx context.Context) db.TxManager {
+	if s.transactionManager == nil {
+		s.transactionManager = transaction.NewTransactionManager(s.DbClient(ctx).DB())
+	}
+
+	return s.transactionManager
 }
 
 func (s *serviceProvider) UserRepository(ctx context.Context) repository.UserRepository {
