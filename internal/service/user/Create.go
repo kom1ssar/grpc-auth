@@ -8,7 +8,7 @@ import (
 
 func (s *userService) Create(ctx context.Context, user *model.User, passwordConfirm string) (int64, error) {
 	if passwordConfirm != user.Password {
-		return 0, errors.New("password   and password_confirm do not match")
+		return 0, errors.New("password and password_confirm do not match")
 	}
 
 	id, err := s.userRepo.Create(ctx, user)
