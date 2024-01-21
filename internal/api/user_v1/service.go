@@ -1,4 +1,4 @@
-package user
+package user_v1
 
 import (
 	"github.com/kom1ssar/grpc-auth/internal/service"

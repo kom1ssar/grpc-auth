@@ -15,7 +15,7 @@ enum UserRole{
 }
 
 
-service UserV1{
+service UserV1 {
   rpc Create(CreateUserRequest) returns (CreateUserResponse);
   rpc Get(GetUserRequest) returns (GetUserResponse);
   rpc Update(UpdateUserRequest) returns (google.protobuf.Empty);
@@ -24,7 +24,7 @@ service UserV1{
 }
 
 
-message User{
+message User {
   int64 id = 1;
   string name = 2;
   string email = 3;
@@ -33,26 +33,26 @@ message User{
   google.protobuf.Timestamp updated_at = 6;
 }
 
-message UserToCreate{
+message UserToCreate {
   string name = 1 [(validate.rules).string = {min_len: 3, max_len: 50}];
   string email = 2 [(validate.rules).string.email = true];
   string password = 3 [(validate.rules).string = {min_len: 5, max_len: 50}];
   string password_confirm = 4 [(validate.rules).string = {min_len: 5, max_len: 50}];
 }
 
-message CreateUserRequest{
+message CreateUserRequest {
  UserToCreate user = 1;
 }
 
-message CreateUserResponse{
+message CreateUserResponse {
   int64 id = 1;
 }
 
-message GetUserRequest{
+message GetUserRequest {
   int64 id = 1 [(validate.rules).int64.gte = 1];
 }
 
-message GetUserResponse{
+message GetUserResponse {
   int64 id = 1;
   string name = 2;
   string email = 3;
@@ -62,12 +62,12 @@ message GetUserResponse{
 }
 
 
-message UpdateUserRequest{
+message UpdateUserRequest {
   int64 id = 1 [(validate.rules).int64.gte = 1];
   google.protobuf.StringValue name = 2 [(validate.rules).string = {min_len: 3, max_len: 50}];
   google.protobuf.StringValue email = 3 [(validate.rules).string.email = true];
 }
 
-message DeleteUserRequest{
+message DeleteUserRequest {
   int64 id = 1 [(validate.rules).int64.gte = 1];
 }

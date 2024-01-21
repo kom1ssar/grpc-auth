@@ -11,6 +11,13 @@ func (s *userService) Create(ctx context.Context, user *model.User, passwordConf
 		return 0, errors.New("password and password_confirm do not match")
 	}
 
+	hashPassword, err := s.passwordManager.Hash(ctx, user.Password)
+	if err != nil {
+		return 0, err
+	}
+
+	user.Password = hashPassword
+
 	id, err := s.userRepo.Create(ctx, user)
 	if err != nil {
 		return 0, err

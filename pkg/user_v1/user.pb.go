@@ -2,7 +2,7 @@
 // versions:
 // 	protoc-gen-go v1.28.1
 // 	protoc        v4.25.1
-// source: user.proto
+// source: user_v1.proto
 
 package user_v1
 
@@ -233,7 +233,7 @@ type CreateUserRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	User *UserToCreate `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
+	User *UserToCreate `protobuf:"bytes,1,opt,name=user_v1,proto3" json:"user_v1,omitempty"`
 }
 
 func (x *CreateUserRequest) Reset() {
@@ -696,7 +696,7 @@ var file_user_proto_depIdxs = []int32{
 	0,  // 0: user_v1.User.role:type_name -> user_v1.UserRole
 	9,  // 1: user_v1.User.created_at:type_name -> google.protobuf.Timestamp
 	9,  // 2: user_v1.User.updated_at:type_name -> google.protobuf.Timestamp
-	2,  // 3: user_v1.CreateUserRequest.user:type_name -> user_v1.UserToCreate
+	2,  // 3: user_v1.CreateUserRequest.user_v1:type_name -> user_v1.UserToCreate
 	0,  // 4: user_v1.GetUserResponse.role:type_name -> user_v1.UserRole
 	9,  // 5: user_v1.GetUserResponse.created_at:type_name -> google.protobuf.Timestamp
 	9,  // 6: user_v1.GetUserResponse.updated_at:type_name -> google.protobuf.Timestamp

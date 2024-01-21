@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package access_v1;
+
+import "google/protobuf/empty.proto";
+
+option go_package = "github.com/kom1ssar/grpc-auth/pkg/access_v1;access_v1";
+
+service AccessV1 {
+  rpc Check(CheckRequest) returns (google.protobuf.Empty);
+}
+
+
+message CheckRequest {
+  string token = 1;
+  string service = 2;
+  string method = 3;
+}

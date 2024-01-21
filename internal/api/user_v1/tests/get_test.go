@@ -4,50 +4,57 @@ import (
 	"context"
 	"github.com/brianvoe/gofakeit/v6"
 	"github.com/gojuno/minimock/v3"
-	user "github.com/kom1ssar/grpc-auth/internal/api/user"
+	"github.com/kom1ssar/grpc-auth/internal/api/user_v1"
 	"github.com/kom1ssar/grpc-auth/internal/model"
 	"github.com/kom1ssar/grpc-auth/internal/service"
 	serviceMocks "github.com/kom1ssar/grpc-auth/internal/service/mocks"
 	desc "github.com/kom1ssar/grpc-auth/pkg/user_v1"
 	"github.com/stretchr/testify/require"
+	"google.golang.org/protobuf/types/known/timestamppb"
 	"testing"
+	"time"
 )
 
-func TestCreate(t *testing.T) {
+func TestGet(t *testing.T) {
 	type userServiceMockFunc func(mc *minimock.Controller) service.UserService
 
 	type args struct {
 		ctx context.Context
-		req *desc.CreateUserRequest
+		req *desc.GetUserRequest
 	}
 
 	var (
 		ctx = context.Background()
 		mc  = minimock.NewController(t)
 
-		id = gofakeit.Int64()
+		id        = gofakeit.Int64()
+		name      = gofakeit.BeerName()
+		email     = gofakeit.Email()
+		password  = gofakeit.Password(true, true, true, false, false, 5)
+		role      = int32(0)
+		createdAt = time.Time{}
+		updatedAt = time.Time{}
 
-		name            = gofakeit.BeerName()
-		email           = gofakeit.Email()
-		password        = gofakeit.Password(true, true, true, false, false, 5)
-		passwordConfirm = password
-		//worngPasswordConfirm = gofakeit.Password(true, true, true, false, false, 6)
-		//err = fmt.Errorf("error")
-
-		req = &desc.CreateUserRequest{User: &desc.UserToCreate{
-			Name:            name,
-			Email:           email,
-			Password:        password,
-			PasswordConfirm: passwordConfirm,
-		}}
+		req = &desc.GetUserRequest{Id: id}
 
 		usr = &model.User{
-			Name:     name,
-			Email:    email,
-			Password: password,
+			Id:        id,
+			Name:      name,
+			Email:     email,
+			Role:      role,
+			Password:  password,
+			CreatedAt: createdAt,
+			UpdatedAt: updatedAt,
 		}
 
-		res = &desc.CreateUserResponse{Id: id}
+		res = &desc.GetUserResponse{
+			Id:        id,
+			Name:      name,
+			Email:     email,
+			Role:      desc.UserRole(role),
+			CreatedAt: timestamppb.New(createdAt),
+			UpdatedAt: timestamppb.New(updatedAt),
+		}
 	)
 
 	mc.Finish()
@@ -55,12 +62,11 @@ func TestCreate(t *testing.T) {
 	tests := []struct {
 		name            string
 		args            args
-		want            *desc.CreateUserResponse
+		want            *desc.GetUserResponse
 		err             error
 		userServiceMock userServiceMockFunc
 	}{
 		{
-
 			name: "success-case",
 			args: args{
 				ctx: ctx,
@@ -70,7 +76,7 @@ func TestCreate(t *testing.T) {
 			err:  nil,
 			userServiceMock: func(mc *minimock.Controller) service.UserService {
 				mock := serviceMocks.NewUserServiceMock(mc)
-				mock.CreateMock.Expect(ctx, usr, passwordConfirm).Return(id, nil)
+				mock.GetByIdMock.Expect(ctx, id).Return(usr, nil)
 
 				return mock
 			},
@@ -83,14 +89,13 @@ func TestCreate(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			userServiceMock := tt.userServiceMock(mc)
 
-			api := user.NewImplementation(userServiceMock)
+			api := user_v1.NewImplementation(userServiceMock)
 
-			resp, err := api.Create(tt.args.ctx, tt.args.req)
+			resp, err := api.Get(tt.args.ctx, tt.args.req)
 
 			require.Equal(t, tt.err, err)
 			require.Equal(t, tt.want, resp)
 
 		})
 	}
-
 }

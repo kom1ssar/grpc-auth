@@ -5,9 +5,10 @@ import (
 	"github.com/kom1ssar/grpc-auth/internal/closer"
 	"github.com/kom1ssar/grpc-auth/internal/config"
 	"github.com/kom1ssar/grpc-auth/internal/interceptor"
-	desc "github.com/kom1ssar/grpc-auth/pkg/user_v1"
+	descAuthV1 "github.com/kom1ssar/grpc-auth/pkg/auth_v1"
+	descUserV1 "github.com/kom1ssar/grpc-auth/pkg/user_v1"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/reflection"
 	"log"
 	"net"
@@ -64,13 +65,18 @@ func (a *App) initConfig(_ context.Context) error {
 }
 
 func (a *App) initGRPCServer(ctx context.Context) error {
+	tlsCredentials, err := credentials.NewServerTLSFromFile("service.pem", "service.key")
+	if err != nil {
+		log.Fatalf("Error parse TLS creds %s", err.Error())
+	}
 	a.grpcServer = grpc.NewServer(
-		grpc.Creds(insecure.NewCredentials()),
+		grpc.Creds(tlsCredentials),
 		grpc.UnaryInterceptor(interceptor.ValidateInterceptor),
 	)
 	reflection.Register(a.grpcServer)
 
-	desc.RegisterUserV1Server(a.grpcServer, a.serviceProvider.UserImplementation(ctx))
+	descUserV1.RegisterUserV1Server(a.grpcServer, a.serviceProvider.UserImplementation(ctx))
+	descAuthV1.RegisterAuthServiceServer(a.grpcServer, a.serviceProvider.AuthImplementation(ctx))
 
 	return nil
 }
