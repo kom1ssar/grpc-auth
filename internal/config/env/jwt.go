@@ -5,10 +5,12 @@ import (
 	"github.com/kom1ssar/grpc-auth/internal/config"
 	"os"
 	"strconv"
+	"time"
 )
 
 const (
-	jwtSecretEnvName         = "JWT_SECRET"
+	jwtAccessSecretEnvName   = "JWT_ACCESS_SECRET"
+	jwtRefreshSecretEnvName  = "JWT_REFRESH_SECRET"
 	jwtRefreshExpiredEnvName = "JWT_REFRESH_EXPIRED"
 	jwtAccessExpiredEnvName
 )
@@ -16,15 +18,21 @@ const (
 var _ config.JWTConfig = (*jwtConfig)(nil)
 
 type jwtConfig struct {
-	secret         string
-	expiredRefresh int
-	expiredAccess  int
+	accessSecret          string
+	refreshSecret         string
+	secondsExpiredRefresh time.Duration
+	secondsExpireAccess   time.Duration
 }
 
 func NewJWTConfig() (config.JWTConfig, error) {
-	secret := os.Getenv(jwtSecretEnvName)
-	if len(secret) == 0 {
-		return nil, errors.New("jwt_secret env not found")
+	accessSecret := os.Getenv(jwtAccessSecretEnvName)
+	if len(accessSecret) == 0 {
+		return nil, errors.New("jwt_access_secret env not found")
+	}
+
+	refreshSecret := os.Getenv(jwtRefreshSecretEnvName)
+	if len(refreshSecret) == 0 {
+		return nil, errors.New("jwt_refresh_secret env not found")
 	}
 
 	expiredRefreshString := os.Getenv(jwtRefreshExpiredEnvName)
@@ -46,21 +54,26 @@ func NewJWTConfig() (config.JWTConfig, error) {
 	}
 
 	return &jwtConfig{
-		secret:         secret,
-		expiredRefresh: expiredRefresh,
-		expiredAccess:  expiredAccess,
+		accessSecret:          accessSecret,
+		refreshSecret:         refreshSecret,
+		secondsExpiredRefresh: time.Second * time.Duration(expiredRefresh),
+		secondsExpireAccess:   time.Second * time.Duration(expiredAccess),
 	}, nil
 
 }
 
-func (j *jwtConfig) Secret() string {
-	return j.secret
+func (j *jwtConfig) AccessSecret() string {
+	return j.accessSecret
 }
 
-func (j *jwtConfig) ExpiredRefresh() int {
-	return j.expiredRefresh
+func (j *jwtConfig) RefreshSecret() string {
+	return j.refreshSecret
 }
 
-func (j *jwtConfig) ExpiredAccess() int {
-	return j.expiredAccess
+func (j *jwtConfig) SecondsExpiredRefresh() time.Duration {
+	return j.secondsExpiredRefresh
+}
+
+func (j *jwtConfig) SecondsExpiredAccess() time.Duration {
+	return j.secondsExpireAccess
 }

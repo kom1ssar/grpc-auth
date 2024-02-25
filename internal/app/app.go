@@ -8,7 +8,7 @@ import (
 	descAuthV1 "github.com/kom1ssar/grpc-auth/pkg/auth_v1"
 	descUserV1 "github.com/kom1ssar/grpc-auth/pkg/user_v1"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
+	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/reflection"
 	"log"
 	"net"
@@ -65,12 +65,13 @@ func (a *App) initConfig(_ context.Context) error {
 }
 
 func (a *App) initGRPCServer(ctx context.Context) error {
-	tlsCredentials, err := credentials.NewServerTLSFromFile("service.pem", "service.key")
-	if err != nil {
-		log.Fatalf("Error parse TLS creds %s", err.Error())
-	}
+	//tlsCredentials, err := credentials.NewServerTLSFromFile("service.pem", "service.pem")
+	//if err != nil {
+	//	log.Fatalf("Error parse TLS creds %s", err.Error())
+	//}
 	a.grpcServer = grpc.NewServer(
-		grpc.Creds(tlsCredentials),
+		grpc.Creds(insecure.NewCredentials()),
+		//grpc.Creds(tlsCredentials),
 		grpc.UnaryInterceptor(interceptor.ValidateInterceptor),
 	)
 	reflection.Register(a.grpcServer)

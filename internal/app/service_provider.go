@@ -11,6 +11,7 @@ import (
 	"github.com/kom1ssar/grpc-auth/internal/config"
 	"github.com/kom1ssar/grpc-auth/internal/config/env"
 	"github.com/kom1ssar/grpc-auth/internal/managers"
+	"github.com/kom1ssar/grpc-auth/internal/managers/jwt"
 	"github.com/kom1ssar/grpc-auth/internal/managers/password"
 	"github.com/kom1ssar/grpc-auth/internal/repository"
 	userRepo "github.com/kom1ssar/grpc-auth/internal/repository/user"
@@ -33,6 +34,7 @@ type serviceProvider struct {
 	authService service.AuthService
 
 	passwordManager managers.PasswordManager
+	jwtManager      managers.JWTManager
 
 	userImplementation *user_v1.Implementation
 	authImplementation *auth_v1.Implementation
@@ -129,7 +131,7 @@ func (s *serviceProvider) UserService(ctx context.Context) service.UserService {
 
 func (s *serviceProvider) AuthService(ctx context.Context) service.AuthService {
 	if s.authService == nil {
-		s.authService = authSrv.NewAuthService(s.UserRepository(ctx), s.PasswordManager(ctx), s.JWTConfig())
+		s.authService = authSrv.NewAuthService(s.UserRepository(ctx), s.PasswordManager(ctx), s.JWTManager(ctx))
 	}
 
 	return s.authService
@@ -157,4 +159,12 @@ func (s *serviceProvider) PasswordManager(_ context.Context) managers.PasswordMa
 	}
 
 	return s.passwordManager
+}
+
+func (s *serviceProvider) JWTManager(_ context.Context) managers.JWTManager {
+	if s.jwtManager == nil {
+		s.jwtManager = jwt.NewJWTManager(s.JWTConfig())
+	}
+
+	return s.jwtManager
 }

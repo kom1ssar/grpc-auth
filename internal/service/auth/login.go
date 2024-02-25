@@ -17,8 +17,18 @@ func (a *authService) Login(ctx context.Context, email string, password string) 
 		return nil, errors.New("password not match")
 	}
 
+	accessToken, err := a.jwtManager.GenerateAccess(user.Id, user.Email, user.Role)
+	if err != nil {
+		return nil, err
+	}
+
+	refreshToken, err := a.jwtManager.GenerateRefresh(user.Id)
+	if err != nil {
+		return nil, err
+	}
+
 	return &model.JwtTokens{
-		RefreshToken: "token",
-		AccessToken:  "token",
+		RefreshToken: accessToken,
+		AccessToken:  refreshToken,
 	}, nil
 }
